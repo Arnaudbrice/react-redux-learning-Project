@@ -1,28 +1,103 @@
+import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import {
-  clearTodos,
-  deleteTodo,
-  setFilter,
-  toggleTodo,
-} from "../features/todos/todoSlice";
+  useDeleteTodoMutation,
+  useGetTodosQuery,
+  useToggleTodoMutation,
+} from "../features/todos/todoApi";
+import { selectFilter } from "../features/todos/todoSelectors";
+import { setFilter } from "../features/todos/todoSlice";
+import { Todo } from "../types";
 
 export default function TodoList() {
+  //********** state for toggling todo **********
+  const [togglingTodoIds, setTogglingTodoIds] = useState<number[]>([]);
+
+  //********** rtk query hooks **********
+  const [toggleTodo, toggleResult] = useToggleTodoMutation();
+
   // aktueller items state aus dem redux store lesen
-  const todos = useAppSelector((state) => state.todos.items);
+  // const todos = useAppSelector((state) => state.todos.items);
+  // const todos = useAppSelector(selectTodos);
   // aktueller filter state aus dem redux store lesen
-  const filter = useAppSelector((state) => state.todos.filter);
+  // const filter = useAppSelector((state) => state.todos.filter);
+  //! result={data,isLoading, isError,error,isSuccess,....} und deleteTodo ist die Trigger-Funktion, die die Mutation auslöst
+  const [deleteTodo, result] = useDeleteTodoMutation();
+
+  const { data, isLoading, isError, error, isSuccess } = useGetTodosQuery();
+
+  //********** filter todo **********
+  const filter = useAppSelector(selectFilter);
+
+  const todos = data ?? []; //fallback definieren
 
   const filteredTodos =
     filter === "Alle"
       ? todos
       : filter === "Offen"
-        ? todos.filter((todo) => todo.completed === false)
-        : todos.filter((todo) => todo.completed === true);
+        ? todos.filter((item) => item.completed === false)
+        : todos.filter((item) => item.completed === true);
 
-  // actions dispatchen
   const dispatch = useAppDispatch();
 
+  //********** handle toggle todo **********
+  const handleToggleTodo = async (todo: Todo) => {
+    setTogglingTodoIds((prev) => [...prev, todo.id]);
+    try {
+      const updatedTodo = await toggleTodo({
+        id: todo.id,
+        completed: !todo.completed,
+      }).unwrap();
+      console.log(updatedTodo);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      // nach Erfolg oder Fehler, checkbox wieder anklickbar machen
+      setTogglingTodoIds((prev) => prev.filter((id) => id !== todo.id));
+    }
+  };
+
+  //********** handle delete todo **********
+  const handleDeleteTodo = async (id: number) => {
+    try {
+      await deleteTodo(id).unwrap();
+      console.log("todo deleted");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  /*  const filteredTodos =
+    filter === "Alle"
+      ? todos
+      : filter === "Offen"
+        ? todos.filter((todo) => todo.completed === false)
+        : todos.filter((todo) => todo.completed === true);
+ */
+
+  /*  //! Wenn sich das Ergebnis der Selector-Funktion ändert, veranlasst useAppSelector einen neuen Render der Komponente.
+  const filteredTodos = useAppSelector(selectFilteredTodos);
+    // actions dispatchen
+  const dispatch = useAppDispatch();
+
+  //! Wenn sich das Ergebnis der Selector-Funktion ändert, veranlasst useAppSelector einen neuen Render der Komponente.
+  const loading = useAppSelector(selectLoading);
+
+  //! Wenn sich das Ergebnis der Selector-Funktion ändert, veranlasst useAppSelector einen neuen Render der Komponente.
+  const error = useAppSelector(selectError);
+
+  useEffect(() => {
+    dispatch(fetchTodos()); //re-render the component when the todos are fetched successfully and the state is updated in the store.
+  }, [dispatch]); */
+
   console.log("filter", filter);
+
+  if (isError) {
+    return <div>Error: Todos konnten nicht geladen werden.</div>;
+  }
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="container">
@@ -60,7 +135,11 @@ export default function TodoList() {
                   <input
                     type="checkbox"
                     checked={todo.completed}
-                    onChange={() => dispatch(toggleTodo(todo.id))}
+                    disabled={
+                      toggleResult.isLoading &&
+                      togglingTodoIds.includes(todo.id)
+                    }
+                    onChange={() => handleToggleTodo(todo)}
                   />
                   <span className={todo.completed ? "completed" : ""}>
                     {todo.title}
@@ -69,7 +148,7 @@ export default function TodoList() {
                 <button
                   className="delete-button"
                   type="button"
-                  onClick={() => dispatch(deleteTodo(todo.id))}>
+                  onClick={() => handleDeleteTodo(todo.id)}>
                   Löschen
                 </button>
               </li>
