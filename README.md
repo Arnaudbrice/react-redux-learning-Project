@@ -279,3 +279,81 @@ useAppSelector(selectTodos);
 ```
 
 **Hier geht es beim nächsten Mal weiter.**
+
+
+
+---
+
+
+Ein **Slice definiert einen Bereich deines Redux-States**. Mit `createSlice` legst du drei Dinge fest:
+
+- **`name`**: Name für die generierten Action Types.
+- **`initialState`**: Anfangszustand dieses Bereichs.
+- **`reducers`**: Funktionen, die festlegen, wie Actions diesen Zustand ändern.
+
+Bei deinem Filter sieht das so aus:
+
+```ts
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+
+// 1. Typ des States definieren
+type Filter = "Alle" | "Offen" | "Erledigt";
+
+type TodoState = {
+  filter: Filter;
+};
+
+// 2. Anfangszustand festlegen
+const initialState: TodoState = {
+  filter: "Alle",
+};
+
+// 3. Slice erstellen
+const todoSlice = createSlice({
+  name: "todoList",
+  initialState,
+  reducers: {
+    setFilter: (state, action: PayloadAction<Filter>) => {
+      state.filter = action.payload;
+    },
+  },
+});
+
+// 4. Action Creator und Reducer exportieren
+export const { setFilter } = todoSlice.actions;
+export default todoSlice.reducer;
+```
+
+Redux Toolkit erzeugt daraus:
+
+```ts
+setFilter("Offen"); // Action Creator aufrufen
+
+// Ergebnis: ein Action-Objekt
+{
+  type: "todoList/setFilter",
+  payload: "Offen"
+}
+```
+
+Den **Slice-Reducer registrierst du im Store**:
+
+```ts
+import todosReducer from "./features/todos/todoSlice";
+
+const store = configureStore({
+  reducer: {
+    todos: todosReducer,
+  },
+});
+```
+
+Der Store-Key `todos` bestimmt den Zugriff: **`state.todos.filter`**. Der Slice-Name `"todoList"` bestimmt dagegen den Action Type: **`"todoList/setFilter"`**.
+
+In der Komponente löst du die Änderung aus:
+
+```ts
+dispatch(setFilter("Offen"));
+```
+
+Dadurch wird deine `setFilter`-Reducer-Funktion ausgeführt und der gespeicherte Filter auf `"Offen"` gesetzt.
