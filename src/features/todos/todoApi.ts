@@ -38,11 +38,37 @@ export const todoApi = createApi({
       }),
       toggleTodo: builder.mutation<Todo, ToggleTodoInput>({
         query: ({ id, completed }) => ({
-          url: `todos/${id}`,
+          url: `todosw/${id}`,
           method: "PATCH",
           body: { completed },
         }),
-        invalidatesTags: ["Todos"],
+
+        async onQueryStarted({ id, completed }, { dispatch, queryFulfilled }) {
+          //1- cache optimistic update
+          const patchResult = dispatch(
+            todoApi.util.updateQueryData(
+              "getTodos",
+              undefined,
+              (draftTodos) => {
+                const todo = draftTodos.find((todo) => todo.id === id);
+
+                if (todo) {
+                  todo.completed = completed;
+                }
+              },
+            ),
+          );
+
+          try {
+            //2- wait of server response from the patch request
+            await queryFulfilled;
+          } catch (err) {
+            // 3-rollback (patch request failed)
+            console.error(err);
+            patchResult.undo();
+          }
+        },
+        /*  invalidatesTags: ["Todos"],//wird durch optimistic update ersetzt, da placeholder immer originale Daten zurückliefert bei getTodos (ohne die gemachten Änderungen), ansonsten könnte man auch optimistic update und invalidesTags: ["Todos"] kombinieren (best practice)*/
       }),
     };
   },
