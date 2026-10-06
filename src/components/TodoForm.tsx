@@ -52,6 +52,7 @@ TodoList
       return;
     }
     try {
+      /* Bei RTK Query rufst du den Query-Hook oder eine Mutation-Trigger-Funktion auf; RTK Query übernimmt das Dispatchen der zugehörigen Actions. */
       const newTodo = await addTodo({
         title: trimmedTitle,
         completed: false,
