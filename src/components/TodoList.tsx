@@ -99,7 +99,7 @@ export default function TodoList() {
   if (isTodosError) {
     return <div>Error: Todos konnten nicht geladen werden.</div>;
   }
-  if (isTodosLoding) {
+  if (isTodosLoading) {
     return <div>Loading...</div>;
   }
 
