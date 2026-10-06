@@ -14,6 +14,7 @@ export default function TodoList() {
   const [togglingTodoIds, setTogglingTodoIds] = useState<number[]>([]);
 
   //********** rtk query hooks **********
+  //!(endpoint as) trigger function  und result object destructuring
   const [toggleTodo, toggleResult] = useToggleTodoMutation();
 
   // aktueller items state aus dem redux store lesen
@@ -29,7 +30,7 @@ export default function TodoList() {
   //********** filter todo **********
   const filter = useAppSelector(selectFilter);
 
-  const todos = data ?? []; //fallback definieren
+  const todos = data ?? []; //!fallback definieren
 
   const filteredTodos =
     filter === "Alle"
