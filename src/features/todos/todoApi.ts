@@ -114,4 +114,5 @@ export const {
   useDeleteTodoMutation,
   useAddTodoMutation,
   useToggleTodoMutation,
+  useGetTodoQuery,
 } = todoApi; //object destructuring
