@@ -1,7 +1,9 @@
+import { skipToken } from "@reduxjs/toolkit/query";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import {
   useDeleteTodoMutation,
+  useGetTodoQuery,
   useGetTodosQuery,
   useToggleTodoMutation,
 } from "../features/todos/todoApi";
@@ -10,6 +12,11 @@ import { setFilter } from "../features/todos/todoSlice";
 import { Todo } from "../types";
 
 export default function TodoList() {
+  //********** state for selected todo id **********
+
+  const [selectedTodoId, setSelectedTodoId] = useState<number | undefined>(
+    undefined,
+  );
   //********** state for toggling todo **********
   const [togglingTodoIds, setTogglingTodoIds] = useState<number[]>([]);
 
@@ -22,15 +29,29 @@ export default function TodoList() {
   // const todos = useAppSelector(selectTodos);
   // aktueller filter state aus dem redux store lesen
   // const filter = useAppSelector((state) => state.todos.filter);
-  //! result={data,isLoading, isError,error,isSuccess,....} und deleteTodo ist die Trigger-Funktion, die die Mutation auslöst
-  const [deleteTodo, result] = useDeleteTodoMutation();
+  //![deleteTodo, result] mit  result={data,isLoading, isError,error,isSuccess,....} und deleteTodo ist die Trigger-Funktion, die die Mutation auslöst
+  const [deleteTodo] = useDeleteTodoMutation();
 
-  const { data, isLoading, isError, error, isSuccess } = useGetTodosQuery();
+  const {
+    data: todosData,
+    isLoading: isTodosLoading,
+    isError: isTodosError,
+  } = useGetTodosQuery();
+
+  //! conditional fetching using skipToken, um die Abfrage zu überspringen, wenn selectedTodoId undefined ist ({ data: todoData, isUninitialized } )
+  const {
+    data: todoData,
+    isLoading: isTodoLoading,
+    isFetching: isTodoFetching,
+    isError: isTodoError,
+    isUninitialized: isTodoUninitialized,
+    isSuccess: isTodoSuccess,
+  } = useGetTodoQuery(selectedTodoId ?? skipToken);
 
   //********** filter todo **********
   const filter = useAppSelector(selectFilter);
 
-  const todos = data ?? []; //!fallback definieren
+  const todos = todosData ?? []; //!fallback definieren
 
   const filteredTodos =
     filter === "Alle"
@@ -40,6 +61,11 @@ export default function TodoList() {
         : todos.filter((item) => item.completed === true);
 
   const dispatch = useAppDispatch();
+
+  //********** handle click on detail button **********
+  const handleDetailTodo = (todoId: number) => {
+    setSelectedTodoId(todoId);
+  };
 
   //********** handle toggle todo **********
   const handleToggleTodo = async (todo: Todo) => {
@@ -68,35 +94,12 @@ export default function TodoList() {
     }
   };
 
-  /*  const filteredTodos =
-    filter === "Alle"
-      ? todos
-      : filter === "Offen"
-        ? todos.filter((todo) => todo.completed === false)
-        : todos.filter((todo) => todo.completed === true);
- */
-
-  /*  //! Wenn sich das Ergebnis der Selector-Funktion ändert, veranlasst useAppSelector einen neuen Render der Komponente.
-  const filteredTodos = useAppSelector(selectFilteredTodos);
-    // actions dispatchen
-  const dispatch = useAppDispatch();
-
-  //! Wenn sich das Ergebnis der Selector-Funktion ändert, veranlasst useAppSelector einen neuen Render der Komponente.
-  const loading = useAppSelector(selectLoading);
-
-  //! Wenn sich das Ergebnis der Selector-Funktion ändert, veranlasst useAppSelector einen neuen Render der Komponente.
-  const error = useAppSelector(selectError);
-
-  useEffect(() => {
-    dispatch(fetchTodos()); //re-render the component when the todos are fetched successfully and the state is updated in the store.
-  }, [dispatch]); */
-
   console.log("filter", filter);
 
-  if (isError) {
+  if (isTodosError) {
     return <div>Error: Todos konnten nicht geladen werden.</div>;
   }
-  if (isLoading) {
+  if (isTodosLoding) {
     return <div>Loading...</div>;
   }
 
@@ -152,18 +155,17 @@ export default function TodoList() {
                   onClick={() => handleDeleteTodo(todo.id)}>
                   Löschen
                 </button>
+                <button
+                  className="detail-button"
+                  type="button"
+                  onClick={() => handleDetailTodo(todo.id)}>
+                  Details
+                </button>
               </li>
             ))}
           </ul>
         )}
       </div>
-
-      <button
-        className="clear-button"
-        type="button"
-        onClick={() => dispatch(clearTodos())}>
-        Alle Löschen
-      </button>
     </div>
   );
 }
