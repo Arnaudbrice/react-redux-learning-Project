@@ -3,7 +3,7 @@ import { ToggleTodoInput, type CreateTodoInput, type Todo } from "../../types";
 
 // create an api slice(server slice) to fetch und manage server state (inclusive cache) on the browser. RTK Query generates automatically the corresponding actions(by mutation for instance "todoApi/executeMutation/pending" and by query for instance "todoApi/executeQuery/pending" ), reducer,middleware and hooks for the api slice.
 export const todoApi = createApi({
-  reducerPath: "todoApi", //redux store key for RTK QUERY state(inclusive cache=clientseitig Zwischenspeicherung von Server Daten )
+  reducerPath: "todosApi", //redux store key for RTK QUERY state(inclusive cache=clientseitig Zwischenspeicherung von Server Daten )
 
   //! fetchBaseQuery sends HTTP requests for queries and mutations, serializes request body, and parses response as JSON by default.
   baseQuery: fetchBaseQuery({
@@ -64,6 +64,7 @@ export const todoApi = createApi({
         }),
         invalidatesTags: [{ id: "LIST", type: "Todos" as const }], //! Invalidates cached query results associated with the "Todos/LIST" tag; active queries are refetched
       }),
+      //! checkbox → optimistic update
       toggleTodo: builder.mutation<Todo, ToggleTodoInput>({
         query: ({ id, completed }) => ({
           url: `todos/${id}`,
@@ -98,10 +99,10 @@ export const todoApi = createApi({
         },
         /*  invalidatesTags: ["Todos"],//wird durch optimistic update ersetzt, da placeholder immer originale Daten zurückliefert bei getTodos (ohne die gemachten Änderungen), ansonsten könnte man auch optimistic update und invalidesTags: ["Todos"] kombinieren */
 
-        //! bei einem echten persistenten Backend
-        /*  invalidatesTags: (_result, _error, arg) => [
+        //! bei einem echten persistenten Backend (wenn zusätzliche Server-Daten zurückgeliefert werden sollen)
+        invalidatesTags: (_result, error, arg) => [
           { id: arg.id, type: "Todos" as const },
-        ], */
+        ],
       }),
     };
   },
