@@ -1,15 +1,14 @@
-import { skipToken } from "@reduxjs/toolkit/query";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import {
   useDeleteTodoMutation,
-  useGetTodoQuery,
   useGetTodosQuery,
   useToggleTodoMutation,
 } from "../features/todos/todoApi";
 import { selectFilter } from "../features/todos/todoSelectors";
 import { setFilter } from "../features/todos/todoSlice";
 import { Todo } from "../types";
+import TodoDetails from "./TodoDetails";
 
 export default function TodoList() {
   //********** state for selected todo id **********
@@ -39,15 +38,16 @@ export default function TodoList() {
   } = useGetTodosQuery();
 
   //! conditional fetching using skipToken, um die Abfrage zu überspringen, wenn selectedTodoId undefined ist ({ data: todoData, isUninitialized } )
-  const {
+  /*  const {
     data: todoData,
     isLoading: isTodoLoading,
     isFetching: isTodoFetching,
     isError: isTodoError,
     isUninitialized: isTodoUninitialized,
     isSuccess: isTodoSuccess,
+    refetch: refetchTodo,
   } = useGetTodoQuery(selectedTodoId ?? skipToken);
-
+ */
   //********** filter todo **********
   const filter = useAppSelector(selectFilter);
 
@@ -165,6 +165,11 @@ export default function TodoList() {
             ))}
           </ul>
         )}
+
+        <TodoDetails
+          todoId={selectedTodoId}
+          onClose={() => setSelectedTodoId(undefined)}
+        />
       </div>
     </div>
   );

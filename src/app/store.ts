@@ -12,7 +12,7 @@ export const store = configureStore({
     todos: todosReducer, //todos ist ein Store-Key (wie queryKey bei TanStack Query), das man benutzen kann, um an den Wert von einem bestimmten state-Slice zu gelangen (state.todos.items)
     //! RTK reducer here
     //! The API reducer stores request status, cached query data, and errors in the Redux store.
-    [todoApi.reducerPath]: todoApi.reducer, //todoApi.reducerPath="todoApi"=> [todoApi.reducerPath]=todoApi(computed property name)
+    [todoApi.reducerPath]: todoApi.reducer, //todoApi.reducerPath="todosApi"=> [todoApi.reducerPath]=todosApi(computed property name)
   },
   /*   RTK Query middleware execute HTTP Request and manage cache*/
   //! The API middleware manages subscriptions, cache lifetime, and tag-based invalidation.
