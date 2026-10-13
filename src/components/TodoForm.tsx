@@ -1,15 +1,16 @@
-import { ChangeEvent, useState, type SubmitEvent } from "react";
-import { useAppDispatch } from "../app/hooks";
+import { useState, type ChangeEvent, type SubmitEvent } from "react";
 import { useAddTodoMutation } from "../features/todos/todoApi";
 
 // export default function TodoForm({ onAddTodo }: TodoFormProps) {
 export default function TodoForm() {
-  const [addTodo, { isLoading, isError, error, isSuccess, reset }] =
+  const [addTodo, { isLoading, isError, isSuccess, reset }] =
     useAddTodoMutation();
 
   const [title, setTitle] = useState("");
+
+  const [validationError, setValidationError] = useState<string | null>(null);
   //! typisierten Dispatch-Hook verwenden.
-  const dispatch = useAppDispatch();
+  // const dispatch = useAppDispatch();
 
   /*  function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -48,7 +49,9 @@ TodoList
   const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     const trimmedTitle = title.trim();
+    //! validation before try/catch block
     if (!trimmedTitle) {
+      setValidationError("Bitte gib eine Aufgabe ein.");
       return;
     }
     try {
@@ -67,7 +70,10 @@ TodoList
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
+    // deletes the validation error when the user types
+    setValidationError(null);
 
+    //! resets the state of the mutation hook when the mutation is successful or when the mutation fails to remove success or error messages
     if (isSuccess || isError) {
       reset();
     }
@@ -83,6 +89,7 @@ TodoList
             value={title}
             onChange={handleChange}
             placeholder="z. B. Redux Store verstehen"
+            // screenreader-text
           />
           <button type="submit" disabled={isLoading}>
             {isLoading ? "Speichern..." : "Hinzufügen"}
@@ -95,6 +102,8 @@ TodoList
       {isSuccess && (
         <p style={{ color: "green" }}>Todo erfolgreich hinzugefügt!</p>
       )}
+
+      {validationError && <p style={{ color: "red" }}>{validationError}</p>}
     </div>
   );
 }
