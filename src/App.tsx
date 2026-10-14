@@ -1,4 +1,5 @@
 import TodoForm from "./components/TodoForm";
+import TodoFormRHF from "./components/TodoFormRHF";
 import TodoList from "./components/TodoList";
 
 export default function App() {
@@ -17,6 +18,8 @@ export default function App() {
 
         <TodoForm />
         <TodoList />
+
+        <TodoFormRHF />
       </section>
     </main>
   );
