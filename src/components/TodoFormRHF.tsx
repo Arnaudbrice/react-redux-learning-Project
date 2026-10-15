@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useAddTodoMutation } from "../features/todos/todoApi";
 import { type TodoFormValues, todoSchema } from "../features/todos/todoSchema";
 
 function TodoFormRHF() {
@@ -15,11 +16,18 @@ function TodoFormRHF() {
     },
   });
 
-  const onSubmit = (data: TodoFormValues) => {
-    /* data={title} */
-    console.log(data);
+  const [addTodo, { isLoading, isError }] = useAddTodoMutation();
 
-    resetForm();
+  const onSubmit = async (data: TodoFormValues) => {
+    /* data={title} */
+    // console.log(data);
+
+    try {
+      await addTodo({ title: data.title, completed: false }).unwrap();
+      resetForm();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -29,7 +37,11 @@ function TodoFormRHF() {
         <input id="todo-title" type="text" {...register("title")} />
         {errors.title && <p>{errors.title.message}</p>}
       </div>
-      <button type="submit">Submit</button>
+      <button disabled={isLoading} type="submit">
+        {isLoading ? "Submitting..." : "Submit"}
+      </button>
+
+      {isError && <p>Error: Todo konnte nicht hinzugefügt werden.</p>}
     </form>
   );
 }
