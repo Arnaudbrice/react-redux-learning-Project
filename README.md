@@ -280,10 +280,7 @@ useAppSelector(selectTodos);
 
 **Hier geht es beim nächsten Mal weiter.**
 
-
-
 ---
-
 
 Ein **Slice definiert einen Bereich deines Redux-States**. Mit `createSlice` legst du drei Dinge fest:
 
@@ -357,3 +354,113 @@ dispatch(setFilter("Offen"));
 ```
 
 Dadurch wird deine `setFilter`-Reducer-Funktion ausgeführt und der gespeicherte Filter auf `"Offen"` gesetzt.
+
+```bash
+Projekt/
+├── src/
+│   ├── app/
+│   │   └── store.ts                  ← vorhanden
+│   │
+│   ├── components/
+│   │   ├── TodoFormRHF.tsx           ← vorhanden
+│   │   └── TodoFormRHF.test.tsx      ← später neu
+│   │
+│   ├── features/
+│   │   └── todos/
+│   │       └── todoApi.ts            ← vorhanden
+│   │
+│   └── test/                         ← neuer Ordner
+│       ├── server.ts                 ← Schritt 1
+│       ├── setup.ts                  ← Schritt 2
+│       └── renderWithProviders.tsx   ← Schritt 3
+│
+└── vite.config.ts / vitest.config.ts ← prüfen/anpassen
+
+
+server.ts →	MSW-Testserver erstellen
+setup.ts →	MSW vor Tests starten, danach zurücksetzen
+renderWithProviders.tsx	 → React-Komponenten mit Redux-Provider rendern
+TodoFormRHF.test.tsx	→ Tatsächliches Benutzerverhalten testen
+
+Wichtig: Bei RTK Query benötigen wir im Test einen Redux-Provider. Das unterscheidet sich von TanStack Query, wo wir einen QueryClientProvider verwenden.
+```
+
+# Schritt 1 – Abhängigkeiten installieren
+
+Falls die Pakete noch nicht installiert sind, führe im Projektverzeichnis Folgendes aus:
+
+```bash
+
+npm install -D vitest jsdom @testing-library/react @testing-library/user-event @testing-library/jest-dom msw
+
+```
+
+### Die Aufgaben der Bibliotheken:
+
+- Vitest: führt Tests aus.
+- React Testing Library: rendert React-Komponenten und untersucht die UI.
+- user-event: simuliert echte Benutzerinteraktionen wie Tippen und Klicken.
+- MSW: fängt HTTP-Anfragen ab und simuliert API-Antworten.
+- jsdom: stellt eine browserähnliche Umgebung bereit.
+
+# Schritt 2 – MSW-Server erstellen
+
+```ts
+
+Erstelle die Datei src/test/server.ts.
+import { setupServer } from "msw/node";
+
+export const server = setupServer();
+
+```
+
+## Warum noch keine Handler?
+
+Wir wollen die HTTP-Antworten später pro Testfall definieren.
+Beispielsweise soll ein Test HTTP 201 simulieren, ein anderer HTTP 500.
+
+# Schritt 3 – Test-Setup erstellen
+
+```ts
+Erstelle src/test/setup.ts:
+import "@testing-library/jest-dom/vitest";
+import { cleanup } from "@testing-library/react";
+import { afterAll, afterEach, beforeAll } from "vitest";
+import { server } from "./server";
+
+beforeAll(() => {
+  server.listen({
+    onUnhandledRequest: "error",
+  });
+});
+
+afterEach(() => {
+  cleanup();
+  server.resetHandlers();
+});
+
+afterAll(() => {
+  server.close();
+});
+
+```
+
+```ts
+Hier lernen wir drei wichtige Lifecycle-Funktionen:
+beforeAll()
+Startet den MSW-Server einmal vor allen Tests dieser Testdatei.
+
+
+
+afterEach()
+Entfernt gerenderte Komponenten und setzt testweise hinzugefügte MSW-Handler zurück.
+
+
+
+afterAll()
+Schließt den MSW-Server nach allen Tests.
+
+
+
+onUnhandledRequest: "error" hilft uns, versehentliche echte HTTP-Anfragen während der Tests zu erkennen.
+```
