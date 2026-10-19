@@ -7,7 +7,7 @@ import { store } from "./app/store";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    {/* Provider wird verwendet, um den Store in den untergeordneten Komponenten von der App Komponente zu übergeben.(genauso wie bei contextProvider (context api)) */}
+    {/* Provider wird verwendet, um den Store für die untergeordneten Komponenten von der App Komponente bereitzustellen.(genauso wie bei contextProvider (context api)) => Redux-Store für die untergeordneten Komponenten bereitstellen */}
     <Provider store={store}>
       <App />
     </Provider>
