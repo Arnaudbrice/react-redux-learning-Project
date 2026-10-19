@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useAddTodoMutation } from "../features/todos/todoApi";
-import { type TodoFormValues, todoSchema } from "../features/todos/todoSchema";
+import { TodoFormValues, todoSchema } from "../features/todos/todoSchema";
 
 function TodoFormRHF() {
   const {
@@ -10,7 +10,7 @@ function TodoFormRHF() {
     formState: { errors },
     reset: resetForm,
   } = useForm<TodoFormValues>({
-    resolver: zodResolver(todoSchema),
+    resolver: zodResolver(todoSchema), //!ZodResolver verbindet Zod-Validierung mit react-hook-form
     defaultValues: {
       title: "",
     },
@@ -35,12 +35,13 @@ function TodoFormRHF() {
       <div>
         <label htmlFor="todo-title">Neue Aufgabe</label>
         <input id="todo-title" type="text" {...register("title")} />
+        {/* Zod-Validierungsfehler anzeigen */}
         {errors.title && <p>{errors.title.message}</p>}
       </div>
       <button disabled={isLoading} type="submit">
         {isLoading ? "Submitting..." : "Submit"}
       </button>
-
+      {/* Mutations-Fehler anzeigen */}
       {isError && <p>Error: Todo konnte nicht hinzugefügt werden.</p>}
     </form>
   );

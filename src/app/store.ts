@@ -7,7 +7,7 @@ import { todoApi } from "../features/todos/todoApi";
 /* Store = zentraler Speicher für den globalen State.
 Der Store verwaltet den State und leitet Actions an die Reducer weiter. */
 //!❶ Store-Factory erstellen
-const setupStore = () => {
+export const setupStore = () => {
   return configureStore({
     // !alle reducers im store registrieren
     reducer: {
@@ -25,7 +25,7 @@ const setupStore = () => {
   });
 };
 
-//! ❷ store für die React-App erstellen
+//! ❷ store für die React-App erstellen (ein neuer Redux-Store erstellen)
 export const store = setupStore();
 
 //! ❸ Typ des Stores ableiten (ReturnType gibt den Rückgabetyp einer Funktion zurück)
