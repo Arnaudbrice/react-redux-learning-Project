@@ -21,6 +21,7 @@ function TodoFormRHF() {
   const onSubmit = async (data: TodoFormValues) => {
     /* data={title} */
     // console.log(data);
+    // !data könnte auch value heißen (muss nicht zwingend data benannt werden)
 
     try {
       await addTodo({ title: data.title, completed: false }).unwrap();
@@ -33,8 +34,8 @@ function TodoFormRHF() {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div>
-        <label htmlFor="todo-title">Neue Aufgabe</label>
-        <input id="todo-title" type="text" {...register("title")} />
+        <label htmlFor="todoform-title">Neue Todo Aufgabe</label>
+        <input id="todoform-title" type="text" {...register("title")} />
         {/* Zod-Validierungsfehler anzeigen */}
         {errors.title && <p>{errors.title.message}</p>}
       </div>

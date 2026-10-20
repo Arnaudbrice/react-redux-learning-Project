@@ -14,8 +14,10 @@
     "moduleResolution": "Bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
+
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src"]
+  // "include": ["src"]
+  "include": ["src", "**/*.test.tsx"]
 }
