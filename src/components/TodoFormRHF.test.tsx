@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import renderWithProviders from "../test/renderWithProviders";
@@ -52,5 +52,39 @@ describe("TodoFormRHF", () => {
 
     // C4: Prüfen, dass kein POST-Request gesendet wurde
     expect(postCount).toBe(0);
+  });
+
+  it("setzt das Formular nach erfolgreichem POST zurück", async () => {
+    const user = userEvent.setup();
+
+    let postCount = 0;
+
+    server.use(
+      // Wildcard '*' hilft bei absoluten vs relativen Pfaden
+      http.post("https://jsonplaceholder.typicode.com/todos", () => {
+        postCount++;
+        return HttpResponse.json(
+          { id: 1, title: "Milch Kaufen", completed: false },
+          { status: 201 },
+        );
+      }),
+    );
+
+    renderWithProviders(<TodoFormRHF />);
+    // screen.logTestingPlaygroundURL();
+
+    const button = screen.getByRole("button", { name: /submit/i });
+
+    const input = screen.getByRole("textbox", {
+      name: /neue todo aufgabe/i,
+    });
+
+    await user.type(input, "Milch Kaufen");
+    await user.click(button);
+    await waitFor(() => {
+      expect(input).toHaveValue("");
+    });
+
+    expect(postCount).toBe(1);
   });
 });
