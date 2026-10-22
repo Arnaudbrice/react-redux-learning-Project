@@ -17,7 +17,7 @@ export const setupStore = () => {
       [todoApi.reducerPath]: todoApi.reducer, //todoApi.reducerPath="todosApi"=> [todoApi.reducerPath]=todosApi(computed property name)
     },
     /*   RTK Query middleware execute HTTP Request and manage cache*/
-    //! The API middleware manages subscriptions, cache lifetime, and tag-based invalidation.
+    //! The API middleware manages subscriptions(polling, refocus,refetch), cache lifetime, and tag-based invalidation.
     middleware: (getDefaultMiddleware) => {
       // Die RTK-Query-Middleware wird zusätzlich zu den Standard-Middlewares registriert.
       return getDefaultMiddleware().concat(todoApi.middleware);
