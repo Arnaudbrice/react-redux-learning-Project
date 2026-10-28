@@ -9,6 +9,9 @@ import { selectFilter } from "../features/todos/todoSelectors";
 import { setFilter } from "../features/todos/todoSlice";
 import { Todo } from "../types";
 import TodoDetails from "./TodoDetails";
+import { data } from "react-router";
+import useTodoFilter from "../hooks/useTodoFilter";
+import TodoFilterBar from "./TodoFilterBar";
 
 export default function TodoList() {
   //********** state for selected todo id **********
@@ -49,16 +52,20 @@ export default function TodoList() {
   } = useGetTodoQuery(selectedTodoId ?? skipToken);
  */
   //********** filter todo **********
-  const filter = useAppSelector(selectFilter);
 
-  const todos = todosData ?? []; //!fallback definieren
+  //! option1: useTodoFilter hook
+  const { filteredTodos, filter, setFilter } = useTodoFilter(todosData ?? []);
+  // !option2
+  // const filter = useAppSelector(selectFilter);
 
-  const filteredTodos =
-    filter === "Alle"
-      ? todos
-      : filter === "Offen"
-        ? todos.filter((item) => item.completed === false)
-        : todos.filter((item) => item.completed === true);
+  // const todos = todosData ?? []; //!fallback definieren
+
+  // const filteredTodos =
+  //   filter === "Alle"
+  //     ? todos
+  //     : filter === "Offen"
+  //       ? todos.filter((item) => item.completed === false)
+  //       : todos.filter((item) => item.completed === true);
 
   const dispatch = useAppDispatch();
 
@@ -105,8 +112,14 @@ export default function TodoList() {
 
   return (
     <div className="container">
-      <div className="button-container">
-        {/* active button style abhängig von dem filter, damit der aktiver Button immer noch sichtbar ist, selbst wenn irgendwo anders geklickt wird. */}
+      {/* filter buttons (useTodoFilter hook) */}
+
+      {/* active button style abhängig von dem filter, damit der aktiver Button immer noch sichtbar ist, selbst wenn irgendwo anders geklickt wird. */}
+      <TodoFilterBar filter={filter} onFilterChange={setFilter} />
+
+      {/* active button style abhängig von dem filter, damit der aktiver Button immer noch sichtbar ist, selbst wenn irgendwo anders geklickt wird. */}
+      {/*  <div className="button-container">
+
         <button
           className={filter === "Alle" ? "active-filter" : ""}
           type="button"
@@ -125,7 +138,7 @@ export default function TodoList() {
           onClick={() => dispatch(setFilter("Erledigt"))}>
           Erledigt
         </button>
-      </div>
+      </div> */}
       <div className="todo-list-container">
         {filteredTodos.length === 0 ? (
           <p className="empty-state">
@@ -139,10 +152,8 @@ export default function TodoList() {
                   <input
                     type="checkbox"
                     checked={todo.completed}
-                    disabled={
-                      toggleResult.isLoading &&
-                      togglingTodoIds.includes(todo.id)
-                    }
+                    //! disable only this checkbox
+                    disabled={togglingTodoIds.includes(todo.id)}
                     onChange={() => handleToggleTodo(todo)}
                   />
                   <span className={todo.completed ? "completed" : ""}>

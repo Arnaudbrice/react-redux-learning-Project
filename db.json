@@ -1,0 +1,29 @@
+{
+  "todos": [
+    {
+      "id": 1,
+      "title": "React Hooks wiederholen",
+      "completed": true
+    },
+    {
+      "id": 2,
+      "title": "RTK Query üben",
+      "completed": true
+    },
+    {
+      "id": 3,
+      "title": "TypeScript Generics lernen",
+      "completed": true
+    },
+    {
+      "title": "sdfsd",
+      "completed": false,
+      "id": 4
+    },
+    {
+      "title": "fsfsdgfds",
+      "completed": false,
+      "id": 5
+    }
+  ]
+}

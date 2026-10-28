@@ -7,7 +7,7 @@ export const todoApi = createApi({
 
   //! fetchBaseQuery sends HTTP requests for queries and mutations, serializes request body, and parses response as JSON by default.
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://jsonplaceholder.typicode.com/",
+    baseUrl: "http://localhost:3001/",
   }),
   tagTypes: ["Todos"], //! Defines the tag types that can be used for cache invalidation
   endpoints: (builder) => {
@@ -39,9 +39,9 @@ export const todoApi = createApi({
 
       getTodo: builder.query<Todo, number>({
         query: (id) => `todos/${id}`,
-        providesTags: (result) => {
+        providesTags: (result, _error, _id) => {
           return result ? [{ id: result.id, type: "Todos" }] : [];
-        },
+        }, //!in dem Fall hier ohne Serverdaten, keine Tag-Zuordnung möglich
       }),
       // deleteTodo is a rtk mutation endpoint
       deleteTodo: builder.mutation<void, number>({
