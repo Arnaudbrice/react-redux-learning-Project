@@ -13,7 +13,10 @@ function TodoFilterBar({ filter, onFilterChange }: TodoFilterBarProps) {
     { label: "Erledigt", value: "completed" },
   ];
   return (
-    <div role="group" aria-label="Filtern nach Status">
+    <div
+      role="group"
+      aria-label="Filtern nach Status"
+      className="button-container">
       {filterOptions.map((option) => (
         <button
           onClick={() => onFilterChange(option.value)}
