@@ -1,16 +1,13 @@
 import { useState } from "react";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { useAppDispatch } from "../app/hooks";
 import {
   useDeleteTodoMutation,
   useGetTodosQuery,
   useToggleTodoMutation,
 } from "../features/todos/todoApi";
-import { selectFilter } from "../features/todos/todoSelectors";
-import { setFilter } from "../features/todos/todoSlice";
+import useTodoFilter from "../hooks/useTodoFilter";
 import { Todo } from "../types";
 import TodoDetails from "./TodoDetails";
-import { data } from "react-router";
-import useTodoFilter from "../hooks/useTodoFilter";
 import TodoFilterBar from "./TodoFilterBar";
 
 export default function TodoList() {

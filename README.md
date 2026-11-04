@@ -464,3 +464,26 @@ Schließt den MSW-Server nach allen Tests.
 
 onUnhandledRequest: "error" hilft uns, versehentliche echte HTTP-Anfragen während der Tests zu erkennen.
 ```
+
+---
+
+# run local json server on port 3001
+
+```bash
+npx json-server --watch db.json --port 3001
+```
+
+---
+
+# Projekt-Meilenstein
+
+1. Bestehendes Projekt RTK Query, TypeScript, Integrationstests abschließen
+2. Frontend React Router, geschützte Routen, Formulare
+3. Backend Express + TypeScript, REST API
+4. Datenbank PostgreSQL, Sequelize, Beziehungen, Migrationen
+5. Auth & Sicherheit Registrierung, Login, Benutzerisolierung, Sicherheitstests
+6. Full-Stack-Integration Frontend mit eigener API verbinden
+7. Qualität & DevOps E2E-Tests, Docker, GitHub Actions, CI/CD
+8. Portfolio Deployment, README, Screenshots, Lebenslauf
+
+---

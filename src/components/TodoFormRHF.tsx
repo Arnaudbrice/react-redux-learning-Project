@@ -35,15 +35,23 @@ function TodoFormRHF() {
     <form onSubmit={handleSubmit(onSubmit)}>
       <div>
         <label htmlFor="todoform-title">Neue Todo Aufgabe</label>
-        <input id="todoform-title" type="text" {...register("title")} />
+        <input
+          id="todoform-title"
+          type="text"
+          {...register("title")}
+          aria-invalid={!!errors.title}
+          aria-describedby={errors.title ? "title-error" : undefined}
+        />
         {/* Zod-Validierungsfehler anzeigen */}
-        {errors.title && <p>{errors.title.message}</p>}
+        {errors.title && <p id="title-error">{errors.title.message}</p>}
       </div>
       <button disabled={isLoading} type="submit">
         {isLoading ? "Submitting..." : "Submit"}
       </button>
       {/* Mutations-Fehler anzeigen */}
-      {isError && <p>Error: Todo konnte nicht hinzugefügt werden.</p>}
+      {isError && (
+        <p id="title-error">Error: Todo konnte nicht hinzugefügt werden.</p>
+      )}
     </form>
   );
 }
