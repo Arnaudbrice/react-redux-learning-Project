@@ -39,7 +39,7 @@ export const todoApi = createApi({
 
       getTodo: builder.query<Todo, number>({
         query: (id) => `todos/${id}`,
-        providesTags: (result, _error, _id) => {
+        providesTags: (result, _error, _arg) => {
           return result ? [{ id: result.id, type: "Todos" }] : [];
         }, //!in dem Fall hier ohne Serverdaten, keine Tag-Zuordnung möglich
       }),
@@ -51,7 +51,7 @@ export const todoApi = createApi({
           // body (nicht notwendig bei DELETE, da wir nur die id brauchen)
         }),
         invalidatesTags: (_result, _error, arg) => [
-          //!arg is the argument of the deleteTodo mutation
+          //!arg is the argument of the deleteTodo mutation (successful or failed mutation will be invalidated)
           { id: arg, type: "Todos" as const },
         ], //! Invalidates the cache entries assosciate with the Todos/arg (todo ID) tag; matching subscriber will refetch.
       }),
@@ -100,9 +100,19 @@ export const todoApi = createApi({
         /*  invalidatesTags: ["Todos"],//wird durch optimistic update ersetzt, da placeholder immer originale Daten zurückliefert bei getTodos (ohne die gemachten Änderungen), ansonsten könnte man auch optimistic update und invalidesTags: ["Todos"] kombinieren */
 
         //! bei einem echten persistenten Backend (wenn zusätzliche Server-Daten zurückgeliefert werden sollen)
-        invalidatesTags: (_result, error, arg) => [
-          { id: arg.id, type: "Todos" as const },
-        ],
+        /**
+         * result: das erfolgreiche Ergebnis der toggleTodo Mutation (Serverantwort)
+         * error: das Fehlerobjekt der toggleTodo Mutation (Serverantwort)
+         * arg: das Argument der toggleTodo Mutation (id und completed)
+         * keine invalidierung bei einem Fehler
+         */
+        invalidatesTags: (_result, error, arg) => {
+          if (error) {
+            // no invalidation if the mutation failed
+            return [];
+          }
+          return [{ id: arg.id, type: "Todos" as const }]; // Invalidates cached query results associated with the "Todos/arg.id" tag; active queries are refetched
+        },
       }),
     };
   },
