@@ -4,9 +4,9 @@ import { afterAll, afterEach, beforeAll } from "vitest";
 import { server } from "./server";
 
 beforeAll(() => {
-  // onUnhandledRequest: "error" hilft uns, nicht abgefangene Requests zu entdecken.
+  // onUnhandledFrame: "error" hilft uns, nicht abgefangene Requests zu entdecken.
   server.listen({
-    onUnhandledRequest: "error",
+    onUnhandledFrame: "error", //!mws3 onhandledError becomes onUnhandledFrame
   });
 });
 

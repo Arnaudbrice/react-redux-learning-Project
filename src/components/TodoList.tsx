@@ -16,18 +16,14 @@ export default function TodoList() {
   const [selectedTodoId, setSelectedTodoId] = useState<number | undefined>(
     undefined,
   );
-  //********** state for toggling todo **********
+
+  //********** state for toggling todo (array of todo ids for the disabled checkboxes) **********
   const [togglingTodoIds, setTogglingTodoIds] = useState<number[]>([]);
 
   //********** rtk query hooks **********
-  //!(endpoint as) trigger function  und result object destructuring
-  const [toggleTodo, toggleResult] = useToggleTodoMutation();
+  //!(endpoint as) trigger function  und result object destructuring([toggleTodo, toggleResult])
+  const [toggleTodo] = useToggleTodoMutation();
 
-  // aktueller items state aus dem redux store lesen
-  // const todos = useAppSelector((state) => state.todos.items);
-  // const todos = useAppSelector(selectTodos);
-  // aktueller filter state aus dem redux store lesen
-  // const filter = useAppSelector((state) => state.todos.filter);
   //![deleteTodo, result] mit  result={data,isLoading, isError,error,isSuccess,....} und deleteTodo ist die Trigger-Funktion, die die Mutation auslöst
   const [deleteTodo] = useDeleteTodoMutation();
 
@@ -37,34 +33,10 @@ export default function TodoList() {
     isError: isTodosError,
   } = useGetTodosQuery();
 
-  //! conditional fetching using skipToken, um die Abfrage zu überspringen, wenn selectedTodoId undefined ist ({ data: todoData, isUninitialized } )
-  /*  const {
-    data: todoData,
-    isLoading: isTodoLoading,
-    isFetching: isTodoFetching,
-    isError: isTodoError,
-    isUninitialized: isTodoUninitialized,
-    isSuccess: isTodoSuccess,
-    refetch: refetchTodo,
-  } = useGetTodoQuery(selectedTodoId ?? skipToken);
- */
   //********** filter todo **********
 
-  //! option1: useTodoFilter hook
+  //!useTodoFilter hook
   const { filteredTodos, filter, setFilter } = useTodoFilter(todosData ?? []);
-  // !option2
-  // const filter = useAppSelector(selectFilter);
-
-  // const todos = todosData ?? []; //!fallback definieren
-
-  // const filteredTodos =
-  //   filter === "Alle"
-  //     ? todos
-  //     : filter === "Offen"
-  //       ? todos.filter((item) => item.completed === false)
-  //       : todos.filter((item) => item.completed === true);
-
-  const dispatch = useAppDispatch();
 
   //********** handle click on detail button **********
   const handleDetailTodo = (todoId: number) => {
@@ -73,6 +45,7 @@ export default function TodoList() {
 
   //********** handle toggle todo **********
   const handleToggleTodo = async (todo: Todo) => {
+    // adds this todo id to togglingTodoIds array (array of todo ids for disabled checkboxes )→avoids multiple clicks on the same checkbox before the response is received (avoids race condition)
     setTogglingTodoIds((prev) => [...prev, todo.id]);
     try {
       const updatedTodo = await toggleTodo({
@@ -83,7 +56,7 @@ export default function TodoList() {
     } catch (err) {
       console.error(err);
     } finally {
-      // nach Erfolg oder Fehler, checkbox wieder anklickbar machen
+      // Re-enable the checkbox after success or failure.
       setTogglingTodoIds((prev) => prev.filter((id) => id !== todo.id));
     }
   };

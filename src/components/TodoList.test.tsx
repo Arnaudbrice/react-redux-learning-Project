@@ -136,6 +136,7 @@ describe("TodoList", () => {
     });
 
     expect(checkbox).not.toBeChecked();
+    expect(checkbox).toBeEnabled();
     await user.click(checkbox);
 
     await waitFor(() => {
@@ -143,11 +144,20 @@ describe("TodoList", () => {
     });
 
     expect(checkbox).toBeChecked();
+    expect(checkbox).toBeDisabled();
+
+    // Verify that a second click does not trigger another PATCH request
+    await user.click(checkbox);
+    expect(patchCount).toBe(1);
 
     resolvePatchPromise();
 
     // only visible after a refetch
     expect(await screen.findByText("react lernen neu")).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(checkbox).toBeEnabled();
+    });
 
     expect(getCount).toBe(2);
     expect(todo.completed).toBe(true);
@@ -156,5 +166,7 @@ describe("TodoList", () => {
         name: /react lernen neu/i,
       }),
     ).toBeChecked();
+
+    expect(patchCount).toBe(1);
   });
 });
