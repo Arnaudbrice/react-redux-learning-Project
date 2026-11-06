@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useAppDispatch } from "../app/hooks";
 import {
   useDeleteTodoMutation,
   useGetTodosQuery,
@@ -82,33 +81,9 @@ export default function TodoList() {
 
   return (
     <div className="container">
-      {/* filter buttons (useTodoFilter hook) */}
-
       {/* active button style abhängig von dem filter, damit der aktiver Button immer noch sichtbar ist, selbst wenn irgendwo anders geklickt wird. */}
       <TodoFilterBar filter={filter} onFilterChange={setFilter} />
 
-      {/* active button style abhängig von dem filter, damit der aktiver Button immer noch sichtbar ist, selbst wenn irgendwo anders geklickt wird. */}
-      {/*  <div className="button-container">
-
-        <button
-          className={filter === "Alle" ? "active-filter" : ""}
-          type="button"
-          onClick={() => dispatch(setFilter("Alle"))}>
-          Alle
-        </button>
-        <button
-          className={filter === "Offen" ? "active-filter" : ""}
-          type="button"
-          onClick={() => dispatch(setFilter("Offen"))}>
-          Offen
-        </button>
-        <button
-          className={filter === "Erledigt" ? "active-filter" : ""}
-          type="button"
-          onClick={() => dispatch(setFilter("Erledigt"))}>
-          Erledigt
-        </button>
-      </div> */}
       <div className="todo-list-container">
         {filteredTodos.length === 0 ? (
           <p className="empty-state">

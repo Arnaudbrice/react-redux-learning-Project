@@ -430,7 +430,7 @@ import { server } from "./server";
 
 beforeAll(() => {
   server.listen({
-    onUnhandledRequest: "error",
+    onUnhandledFrame: "error",
   });
 });
 

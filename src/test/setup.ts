@@ -6,7 +6,7 @@ import { server } from "./server";
 beforeAll(() => {
   // onUnhandledFrame: "error" hilft uns, nicht abgefangene Requests zu entdecken.
   server.listen({
-    onUnhandledFrame: "error", //!mws3 onhandledError becomes onUnhandledFrame
+    onUnhandledFrame: "error",
   });
 });
 
