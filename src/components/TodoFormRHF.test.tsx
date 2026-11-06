@@ -31,7 +31,7 @@ describe("TodoFormRHF", () => {
     let postCount = 0;
 
     server.use(
-      http.post("https://jsonplaceholder.typicode.com/todos", () => {
+      http.post("http://localhost:3001/todos", () => {
         // C1: Zähler erhöhen
         postCount++;
 
@@ -60,8 +60,7 @@ describe("TodoFormRHF", () => {
     let postCount = 0;
 
     server.use(
-      // Wildcard '*' hilft bei absoluten vs relativen Pfaden
-      http.post("https://jsonplaceholder.typicode.com/todos", () => {
+      http.post("http://localhost:3001/todos", () => {
         postCount++;
         return HttpResponse.json(
           { id: 1, title: "Milch Kaufen", completed: false },
@@ -95,23 +94,20 @@ describe("TodoFormRHF", () => {
 
     // TODO 1:
     // MSW-Handler für POST auf
-    // https://jsonplaceholder.typicode.com/todos
+    // http://localhost:3001/todos
     // Request-Body mit await request.json() speichern
     // HTTP 201 zurückgeben
 
     server.use(
-      http.post(
-        "https://jsonplaceholder.typicode.com/todos",
-        async ({ request }) => {
-          receivedBody = await request.json();
-          // console.log(receivedBody);
+      http.post("http://localhost:3001/todos", async ({ request }) => {
+        receivedBody = await request.json();
+        // console.log(receivedBody);
 
-          return HttpResponse.json(
-            { id: 1, title: "Milch kaufen", completed: false },
-            { status: 201 },
-          );
-        },
-      ),
+        return HttpResponse.json(
+          { id: 1, title: "Milch kaufen", completed: false },
+          { status: 201 },
+        );
+      }),
     );
 
     renderWithProviders(<TodoFormRHF />);
@@ -164,7 +160,7 @@ describe("TodoFormRHF", () => {
     // HTTP 500 zurückgeben.
 
     server.use(
-      http.post("https://jsonplaceholder.typicode.com/todos", () => {
+      http.post("http://localhost:3001/todos", () => {
         return HttpResponse.json(
           { message: "server error" },
           {
