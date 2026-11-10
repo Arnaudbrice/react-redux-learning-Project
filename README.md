@@ -1,5 +1,7 @@
 # React Redux + TypeScript Lernprojekt
 
+[![Frontend CI](https://github.com/Arnaudbrice/react-redux-learning-Project/actions/workflows/frontend-ci.yml/badge.svg?branch=feature%2Flearning-redux)](https://github.com/Arnaudbrice/react-redux-learning-Project/actions/workflows/frontend-ci.yml)
+
 Dieses Projekt dient dazu, Redux Toolkit mit React und TypeScript Schritt für Schritt praktisch zu lernen.
 
 Die Anwendung ist eine Todo-App, deren State ursprünglich mit lokalem React-`useState` verwaltet wurde. Der Todo-State wurde anschließend schrittweise zu Redux Toolkit migriert.
