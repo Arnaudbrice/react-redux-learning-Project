@@ -1,26 +1,23 @@
-import TodoForm from "./components/TodoForm";
-import TodoFormRHF from "./components/TodoFormRHF";
-import TodoList from "./components/TodoList";
+import AppLayout from "./layouts/AppLayout";
+import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
+import NotFoundPage from "./pages/NotFoundPage";
+
+import RegisterPage from "./pages/RegisterPage";
+import TodosPage from "./pages/TodosPage";
+
+import { Route, Routes } from "react-router";
 
 export default function App() {
   return (
-    <main className="app-shell">
-      <section className="card">
-        <p className="intro">
-          Die Todo-App verwendet Redux Toolkit für den globalen State. Todos
-          können hinzugefügt, erledigt und gelöscht werden.
-        </p>
-
-        <div className="status-box">
-          <strong>Aktueller Stand:</strong> Redux Store ✅ · Todo Slice ✅ ·
-          useAppSelector ✅ · useAppDispatch ✅
-        </div>
-
-        <TodoForm />
-        <TodoList />
-
-        <TodoFormRHF />
-      </section>
-    </main>
+    <Routes>
+      <Route path="/" element={<AppLayout />}>
+        <Route index element={<HomePage />} />
+        <Route path="login" element={<LoginPage />} />
+        <Route path="register" element={<RegisterPage />} />
+        <Route path="todos" element={<TodosPage />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Route>
+    </Routes>
   );
 }

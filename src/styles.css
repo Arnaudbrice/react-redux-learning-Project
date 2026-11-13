@@ -23,6 +23,43 @@ body {
   min-width: 320px;
 }
 
+header {
+  background: white;
+  height: 50px;
+  display: grid;
+  place-items: center;
+}
+
+/* .app.layout {
+  min-height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+} */
+
+/****** active nav ******/
+
+nav {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+nav > a {
+  color: white;
+  background: green;
+  padding: 0.4rem;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+nav > a.active {
+  color: red;
+}
+
+/* make the footer stick to the bottom */
+main {
+  height: 100vh;
+}
+
 button,
 input {
   font: inherit;
