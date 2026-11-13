@@ -1,0 +1,29 @@
+import TodoForm from "../components/TodoForm";
+import TodoFormRHF from "../components/TodoFormRHF";
+import TodoList from "../components/TodoList";
+
+function TodosPage() {
+  return (
+    <section className="app-shell">
+      <section className="card">
+        <h1>Meine Todos</h1>
+        <p className="intro">
+          Die Todo-App verwendet Redux Toolkit für den globalen State. Todos
+          können hinzugefügt, erledigt und gelöscht werden.
+        </p>
+
+        <div className="status-box">
+          <strong>Aktueller Stand:</strong> Redux Store ✅ · Todo Slice ✅ ·
+          useAppSelector ✅ · useAppDispatch ✅
+        </div>
+
+        <TodoForm />
+        <TodoList />
+
+        <TodoFormRHF />
+      </section>
+    </section>
+  );
+}
+
+export default TodosPage;

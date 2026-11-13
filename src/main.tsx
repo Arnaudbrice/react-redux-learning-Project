@@ -1,15 +1,17 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import App from "./App";
-import "./styles.css";
 import { Provider } from "react-redux";
+import { BrowserRouter } from "react-router";
+import App from "./App";
 import { store } from "./app/store";
+import "./styles.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    {/* Provider wird verwendet, um den Store für die untergeordneten Komponenten von der App Komponente bereitzustellen.(genauso wie bei contextProvider (context api)) => Redux-Store für die untergeordneten Komponenten bereitstellen */}
     <Provider store={store}>
-      <App />
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </Provider>
   </StrictMode>,
 );
