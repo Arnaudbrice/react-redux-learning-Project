@@ -1,3 +1,4 @@
+import ProtectedRoute from "./components/ProtectedRoute";
 import AppLayout from "./layouts/AppLayout";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
@@ -15,7 +16,11 @@ export default function App() {
         <Route index element={<HomePage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
-        <Route path="todos" element={<TodosPage />} />
+        {/*********** protected routes ********** */}
+        <Route element={<ProtectedRoute status="authenticated" />}>
+          <Route path="todos" element={<TodosPage />} />
+        </Route>
+        {/*********** Not Found Route ********** */}
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
