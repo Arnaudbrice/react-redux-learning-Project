@@ -10,12 +10,13 @@ const envSchema = z.object({
 });
 
 // validate process.env
-// safeParse returns an object that either contains success: true and data, or contains success: false and error
+// safeParse returns an object that either contains {success: true,data} and data, or contains {success: false,error}
 const result = envSchema.safeParse(process.env);
 if (!result.success) {
   for (const issue of result.error.issues) {
     console.error(`${issue.path.join(".")}: ${issue.message}`);
   }
+  //! avoids running the server with invalid environment variables
   throw new Error("Invalid environment variables");
 }
 
