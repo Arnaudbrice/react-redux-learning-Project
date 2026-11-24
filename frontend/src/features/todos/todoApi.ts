@@ -1,14 +1,13 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { ToggleTodoInput, type CreateTodoInput, type Todo } from "../../types";
 
-const apiBaseUrl = import.meta.env.VITE_API_URL;
 // create an api slice(server slice) to fetch und manage server state (inclusive cache) on the browser. RTK Query generates automatically the corresponding actions(by mutation for instance "todoApi/executeMutation/pending" and by query for instance "todoApi/executeQuery/pending" ), reducer,middleware and hooks for the api slice.
 export const todoApi = createApi({
   reducerPath: "todosApi", //redux store key for RTK QUERY state(inclusive cache=clientseitig Zwischenspeicherung von Server Daten )
 
   //! fetchBaseQuery sends HTTP requests for queries and mutations, serializes request body, and parses response as JSON by default.
   baseQuery: fetchBaseQuery({
-    baseUrl: `${apiBaseUrl}/`,
+    baseUrl: "http://localhost:3001/",
   }),
   tagTypes: ["Todos"], //! Defines the tag types that can be used for cache invalidation
   endpoints: (builder) => {
